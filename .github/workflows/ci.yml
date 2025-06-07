@@ -85,7 +85,7 @@ jobs:
 
   publish:
     if: |
-      github.repository == 'qdm12/gluetun' &&
+      github.repository == 'codeignus/gluetun' &&
       (
         github.event_name == 'push' ||
         github.event_name == 'release' ||
@@ -109,9 +109,7 @@ jobs:
           flavor: |
             latest=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
           images: |
-            ghcr.io/qdm12/gluetun
-            qmcgaw/gluetun
-            qmcgaw/private-internet-access
+            ghcr.io/codeignus/gluetun
           tags: |
             type=ref,event=pr
             type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
@@ -124,13 +122,8 @@ jobs:
 
       - uses: docker/login-action@v3
         with:
-          username: qmcgaw
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - uses: docker/login-action@v3
-        with:
           registry: ghcr.io
-          username: qdm12
+          username: codeignus
           password: ${{ github.token }}
 
       - name: Short commit
@@ -140,7 +133,7 @@ jobs:
       - name: Build and push final image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v6,linux/arm/v7,linux/ppc64le
+          platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             CREATED=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
